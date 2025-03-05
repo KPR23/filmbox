@@ -1,8 +1,8 @@
-# Nazwa
+# FILMBOX
 
 ## Założenia projektu
 
-Serwis internetowy z bazą filmów, pozwalający dodawać obejrzane filmy oraz oceniać je.
+Przeglądaj obszerną bazę filmów, twórz spersonalizowane listy ulubionych i watchlisty, aby z łatwością planować swoje filmowe wieczory i nigdy nie przegapić wyczekiwanych premier.
 
 ## Metody HTTP
 
