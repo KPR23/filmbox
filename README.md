@@ -1,7 +1,4 @@
 # FILMBOX
-
-## Założenia projektu
-
 Przeglądaj obszerną bazę filmów, twórz spersonalizowane listy ulubionych i watchlisty, aby z łatwością planować swoje filmowe wieczory i nigdy nie przegapić wyczekiwanych premier.
 
 ## Metody HTTP
