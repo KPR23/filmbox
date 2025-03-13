@@ -1,0 +1,39 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: npm install -g pnpm && pnpm install
+
+      - name: Set up environment variables
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_POSTGRES_URL: ${{ secrets.DATABASE_POSTGRES_URL }}
+          DATABASE_POSTGRES_USER: ${{ secrets.DATABASE_POSTGRES_USER }}
+          DATABASE_POSTGRES_HOST: ${{ secrets.DATABASE_POSTGRES_HOST }}
+          DATABASE_POSTGRES_PASSWORD: ${{ secrets.DATABASE_POSTGRES_PASSWORD }}
+          DATABASE_POSTGRES_DATABASE: ${{ secrets.DATABASE_POSTGRES_DATABASE }}
+        run: |
+          echo "DATABASE_URL=$DATABASE_URL" >> .env
+          echo "DATABASE_POSTGRES_URL=$DATABASE_POSTGRES_URL" >> .env
+          echo "DATABASE_POSTGRES_USER=$DATABASE_POSTGRES_USER" >> .env
+          echo "DATABASE_POSTGRES_HOST=$DATABASE_POSTGRES_HOST" >> .env
+          echo "DATABASE_POSTGRES_PASSWORD=$DATABASE_POSTGRES_PASSWORD" >> .env
+          echo "DATABASE_POSTGRES_DATABASE=$DATABASE_POSTGRES_DATABASE" >> .env
+
+      - name: Copy .env.example files
+        shell: bash
+        run: find . -type f -name ".env.example" -exec sh -c 'cp "$1" "${1%.*}"' _ {} \;
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
