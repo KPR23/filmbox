@@ -8,10 +8,9 @@ const options = {
   },
 };
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+type Params = Promise<{ id: string }>;
+
+export async function GET(req: NextRequest, { params }: { params: Params }) {
   const { id } = await params;
 
   if (!process.env.API_ACCESS_TOKEN) {
