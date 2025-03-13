@@ -8,15 +8,10 @@ const options = {
   },
 };
 
-interface Params {
-  id: string;
-}
-
-interface Props {
-  params: Params;
-}
-
-export async function GET(request: Request, { params }: Props) {
+export async function GET(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
   const { id } = await params;
 
   if (!process.env.API_ACCESS_TOKEN) {
