@@ -10,6 +10,7 @@ const options = {
 
 type Params = Promise<{ id: string }>;
 
+// Getting a single movie by ID
 export async function GET(req: NextRequest, { params }: { params: Params }) {
   const { id } = await params;
 

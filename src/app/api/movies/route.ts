@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 const options = {
   method: 'GET',
@@ -8,6 +8,7 @@ const options = {
   },
 };
 
+// Getting all movies
 export async function GET() {
   if (!process.env.API_ACCESS_TOKEN) {
     console.error('API_ACCESS_TOKEN is not defined in environment variables.');
@@ -40,4 +41,20 @@ export async function GET() {
       { status: 500 }
     );
   }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { title, tmdbId, imageUrl, rating } = body;
+
+    if (!title || !tmdbId) {
+      return NextResponse.json(
+        { error: 'Title and tmdbId are required' },
+        { status: 400 }
+      );
+    }
+
+    // const result =
+  } catch {}
 }
