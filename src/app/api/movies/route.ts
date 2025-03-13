@@ -43,18 +43,18 @@ export async function GET() {
   }
 }
 
-export async function POST(req: NextRequest) {
-  try {
-    const body = await req.json();
-    const { title, tmdbId, imageUrl, rating } = body;
+// export async function POST(req: NextRequest) {
+//   try {
+//     const body = await req.json();
+//     const { title, tmdbId, imageUrl, rating } = body;
 
-    if (!title || !tmdbId) {
-      return NextResponse.json(
-        { error: 'Title and tmdbId are required' },
-        { status: 400 }
-      );
-    }
+//     if (!title || !tmdbId) {
+//       return NextResponse.json(
+//         { error: 'Title and tmdbId are required' },
+//         { status: 400 }
+//       );
+//     }
 
-    // const result =
-  } catch {}
-}
+//     // const result =
+//   } catch {}
+// }
