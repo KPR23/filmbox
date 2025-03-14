@@ -20,6 +20,8 @@
   },
   "dependencies": {
     "@prisma/client": "^6.5.0",
+    "@radix-ui/react-slot": "^1.1.2",
+    "@sendgrid/mail": "^8.1.4",
     "better-auth": "^1.2.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
