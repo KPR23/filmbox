@@ -1,9 +1,9 @@
 import { object, string } from 'zod';
 
 const getPasswordSchema = (type: 'password' | 'confirmPassword') =>
-  string({ required_error: `${type} is required` })
-    .min(8, `${type} must be atleast 8 characters`)
-    .max(32, `${type} can not exceed 32 characters`);
+  string({ required_error: `${type} jest wymagane` })
+    .min(8, 'Hasło musi zawierać minumum 8 znaków.')
+    .max(32, 'Hasło moze zawierać maksymalnie 32 znaki');
 
 const getEmailSchema = () =>
   string({ required_error: 'Email is required' })
@@ -11,9 +11,9 @@ const getEmailSchema = () =>
     .email('Invalid email');
 
 const getNameSchema = () =>
-  string({ required_error: 'Name is required' })
-    .min(1, 'Name is required')
-    .max(50, 'Name must be less than 50 characters');
+  string({ required_error: 'Jak się nazywasz?' })
+    .min(1, 'Jak się nazywasz?')
+    .max(50, 'Nazwa musi zawierać maksymalnie 50 znaków.');
 
 export const signUpSchema = object({
   name: getNameSchema(),

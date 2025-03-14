@@ -19,9 +19,21 @@ import { toast } from 'sonner';
 import LoadingButton from '@/components/loading-button';
 import { signUpSchema } from '@/lib/zod';
 import { authClient } from '@/auth/auth-client';
+import { Check } from 'lucide-react';
+import { error } from 'console';
 
 export default function SignUp() {
   const [pending, setPending] = useState(false);
+
+  const polishErrorMessages = {
+    'User already exists': 'Użytkownik o takim adresie e-mail już istnieje.',
+    'Invalid email format': 'Nieprawidłowy format adresu e-mail.',
+    'Password must be at least 8 characters':
+      'Hasło musi mieć co najmniej 8 znaków.',
+    'Failed to send verification email':
+      'Nie udało się wysłać wiadomości z linkiem weryfikacyjnym.',
+    default: 'Wystąpił nieznany błąd. Spróbuj ponownie później.',
+  };
 
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
@@ -45,11 +57,19 @@ export default function SignUp() {
           setPending(true);
         },
         onSuccess: () => {
-          toast('Account created');
+          toast.success('Konto zostało utworzone!', {
+            description:
+              'Na podany adres e-mail został wysłany link weryfikacyjny. Sprawdź spam.',
+          });
         },
         onError: (ctx) => {
           console.log('error', ctx);
-          toast('Something went wrong');
+          toast.error('Coś poszło nie tak ', {
+            description:
+              polishErrorMessages[
+                ctx.error.message as keyof typeof polishErrorMessages
+              ] || polishErrorMessages.default,
+          });
         },
       }
     );
@@ -101,7 +121,7 @@ export default function SignUp() {
           </Form>
           <div className="mt-4 text-center text-sm">
             <Link href="/sign-in" className="text-primary hover:underline">
-              Already have an account? Sign in
+              Masz już konto?
             </Link>
           </div>
         </CardContent>
