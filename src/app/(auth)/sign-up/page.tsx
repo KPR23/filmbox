@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import { set, z } from 'zod';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import LoadingButton from '@/components/loading-button';
@@ -46,6 +46,7 @@ export default function SignUp() {
   });
 
   const onSubmit = async (values: z.infer<typeof signUpSchema>) => {
+    setPending(true);
     await authClient.signUp.email(
       {
         email: values.email,
@@ -53,16 +54,15 @@ export default function SignUp() {
         name: values.name,
       },
       {
-        onRequest: () => {
-          setPending(true);
-        },
         onSuccess: () => {
+          setPending(false);
           toast.success('Konto zostało utworzone!', {
             description:
-              'Na podany adres e-mail został wysłany link weryfikacyjny. Sprawdź spam.',
+              'Aby aktywować konto, kliknij link w wiadomości, którą właśnie wysłaliśmy. Wiadomość mogła trafić do spamu.',
           });
         },
         onError: (ctx) => {
+          setPending(false);
           console.log('error', ctx);
           toast.error('Coś poszło nie tak ', {
             description:
@@ -73,7 +73,6 @@ export default function SignUp() {
         },
       }
     );
-    setPending(false);
   };
 
   return (

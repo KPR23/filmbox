@@ -33,7 +33,8 @@ export async function GET() {
     }
 
     const data = await response.json();
-    return NextResponse.json(data);
+    const movies = data.results;
+    return NextResponse.json(movies);
   } catch (error) {
     console.error('Error fetching data:', error);
     return NextResponse.json(
