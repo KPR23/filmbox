@@ -56,9 +56,9 @@ export default function SignUp() {
       {
         onSuccess: () => {
           setPending(false);
-          toast.success('Konto zostało utworzone!', {
+          toast.success('Konto zostało utworzone', {
             description:
-              'Aby aktywować konto, kliknij link w wiadomości, którą właśnie wysłaliśmy. Wiadomość mogła trafić do spamu.',
+              'Aktywuj konto klikając w link weryfikacyjny wysłany na Twój adres e-mail.',
           });
         },
         onError: (ctx) => {
