@@ -7,7 +7,7 @@ import { set } from 'zod';
 import LoadingButton from './loading-button';
 import { LogOut } from 'lucide-react';
 
-export default function LogOutButton() {
+export default function SignOutButton() {
   const router = useRouter();
   const [pending, setPending] = useState(false);
 

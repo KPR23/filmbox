@@ -6,16 +6,10 @@ import {
   NavigationMenuLink,
   navigationMenuTriggerStyle,
 } from './ui/navigation-menu';
-import { auth } from '@/auth/auth';
-import { headers } from 'next/headers';
-import { Sign } from 'crypto';
-import LogOutButton from './logout-button';
+import SignOutButton from './signout-button';
+import { Session } from '@/auth/auth';
 
-export async function Navbar() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+export function Navbar({ session }: { session: Session | null }) {
   return (
     <nav className="flex justify-between items-center py-3 px-8 z-50 border border-b-2 border-gray-200">
       <Link href="/" passHref>
@@ -55,7 +49,7 @@ export async function Navbar() {
           ) : (
             <NavigationMenuItem>
               <Link href="/sign-up" legacyBehavior passHref>
-                <LogOutButton />
+                <SignOutButton />
               </Link>
             </NavigationMenuItem>
           )}
