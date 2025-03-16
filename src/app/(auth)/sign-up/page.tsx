@@ -13,14 +13,12 @@ import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { set, z } from 'zod';
+import { z } from 'zod';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import LoadingButton from '@/components/loading-button';
 import { signUpSchema } from '@/lib/zod';
 import { authClient } from '@/auth/auth-client';
-import { Check } from 'lucide-react';
-import { error } from 'console';
 
 export default function SignUp() {
   const [pending, setPending] = useState(false);

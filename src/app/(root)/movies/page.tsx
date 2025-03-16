@@ -25,8 +25,12 @@ export default function Movies() {
 
         const data = await response.json();
         setMovies(data);
-      } catch (e: any) {
-        setError(e.message || 'An error occurred while fetching movies.');
+      } catch (e: unknown) {
+        if (e instanceof Error) {
+          setError(e.message || 'An error occurred while fetching movies.');
+        } else {
+          setError('An unknown error occurred.');
+        }
       } finally {
         setIsLoading(false);
       }

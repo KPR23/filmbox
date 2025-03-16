@@ -3,7 +3,6 @@
 import { authClient } from '@/auth/auth-client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { set } from 'zod';
 import LoadingButton from './loading-button';
 import { LogOut } from 'lucide-react';
 
