@@ -11,7 +11,7 @@ export default function LoadingButton({
   return (
     <Button
       onClick={onClick}
-      className="w-full"
+      className="w-full cursor-pointer"
       type="submit"
       disabled={pending}
     >
