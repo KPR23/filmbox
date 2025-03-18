@@ -11,13 +11,18 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Email is required' }, { status: 400 });
 
   try {
-    const employee = await prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: { email },
     });
 
-    if (!employee) return NextResponse.json({ error: 'Employee not found' });
+    if (!user)
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
-    return NextResponse.json(employee);
+    if (user.emailVerified) {
+      return NextResponse.json(user);
+    } else {
+      return NextResponse.json({ error: 'User not verified' }, { status: 400 });
+    }
   } catch (error) {
     console.error(error);
     return NextResponse.json(

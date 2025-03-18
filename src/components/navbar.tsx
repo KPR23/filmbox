@@ -40,7 +40,7 @@ export function Navbar({ session }: { session: Session | null }) {
           </NavigationMenuItem>
           {!session ? (
             <NavigationMenuItem>
-              <Link href="/sign-in" legacyBehavior passHref>
+              <Link href="/login" legacyBehavior passHref>
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                   Zaloguj się
                 </NavigationMenuLink>
@@ -48,7 +48,7 @@ export function Navbar({ session }: { session: Session | null }) {
             </NavigationMenuItem>
           ) : (
             <NavigationMenuItem>
-              <Link href="/sign-up" legacyBehavior passHref>
+              <Link href="/signup" legacyBehavior passHref>
                 <SignOutButton />
               </Link>
             </NavigationMenuItem>

@@ -57,6 +57,7 @@ export default function SignUpPage() {
           toast.success('Konto zostało utworzone', {
             description:
               'Aktywuj konto klikając w link weryfikacyjny wysłany na Twój adres e-mail.',
+            duration: 10000,
           });
         },
         onError: (ctx) => {
