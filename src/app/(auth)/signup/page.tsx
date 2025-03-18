@@ -20,7 +20,7 @@ import LoadingButton from '@/components/loading-button';
 import { signUpSchema } from '@/lib/zod';
 import { authClient } from '@/auth/auth-client';
 
-export default function SignUp() {
+export default function SignUpPage() {
   const [pending, setPending] = useState(false);
 
   const polishErrorMessages = {
