@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2, Router } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { cn } from '@/lib/utils';
@@ -81,6 +81,7 @@ export function LoginForm({
         });
       }
     } catch (error) {
+      console.error('Sign-in error:', error);
       toast.error('Wystąpił błąd', {
         description: 'Spróbuj ponownie później',
       });
