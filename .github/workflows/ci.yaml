@@ -26,6 +26,8 @@ jobs:
           EMAIL_VERIFICATION_CALLBACK_URL: ${{ secrets.EMAIL_VERIFICATION_CALLBACK_URL }}
           SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
           SENDGRID_FROM_EMAIL: ${{ secrets.SENDGRID_FROM_EMAIL }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
         run: |
           echo "DATABASE_URL=$DATABASE_URL" >> .env
           echo "DATABASE_POSTGRES_URL=$DATABASE_POSTGRES_URL" >> .env
@@ -33,6 +35,8 @@ jobs:
           echo "DATABASE_POSTGRES_HOST=$DATABASE_POSTGRES_HOST" >> .env
           echo "DATABASE_POSTGRES_PASSWORD=$DATABASE_POSTGRES_PASSWORD" >> .env
           echo "DATABASE_POSTGRES_DATABASE=$DATABASE_POSTGRES_DATABASE" >> .env
+          echo "GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" >> .env
+          echo "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET" >> .env
 
       - name: Copy .env.example files
         shell: bash

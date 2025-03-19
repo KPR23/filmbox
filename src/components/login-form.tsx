@@ -168,6 +168,7 @@ export function LoginForm({
           });
         },
         onError: (ctx: ErrorContext) => {
+          console.log(ctx);
           toast.error('Wystąpił błąd podczas logowania', {
             description: 'Spróbuj ponownie później',
           });
