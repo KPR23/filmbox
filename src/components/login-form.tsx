@@ -7,11 +7,15 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { ErrorContext } from '@better-fetch/fetch';
 
 import { cn } from '@/lib/utils';
 import { signInSchema } from '@/lib/zod';
 import { checkEmail } from '@/actions/email-check';
 import { authClient } from '@/auth/auth-client';
+import { UserDetails, userDetailsSchema } from '@/lib/userSchema';
 
 import {
   Card,
@@ -30,9 +34,6 @@ import {
   FormLabel,
   FormMessage,
 } from './ui/form';
-import { useRouter } from 'next/navigation';
-import { ErrorContext } from '@better-fetch/fetch';
-import Image from 'next/image';
 
 export function LoginForm({
   className,
@@ -42,7 +43,9 @@ export function LoginForm({
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState('');
+  const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const router = useRouter();
+
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -58,12 +61,15 @@ export function LoginForm({
       const emailExists = await checkEmail(data.email);
 
       if (emailExists) {
-        const userDetails = await fetch(
-          `/api/user/email?email=${data.email}`
-        ).then((res) => res.json());
+        const response = await fetch(`/api/user/email?email=${data.email}`);
+        const userData = await response.json();
 
-        if (userDetails.emailVerified) {
-          const firstName = userDetails.name.split(' ')[0];
+        // Validate user data against our schema
+        const parsedUserDetails = userDetailsSchema.parse(userData);
+        setUserDetails(parsedUserDetails);
+
+        if (parsedUserDetails.emailVerified) {
+          const firstName = parsedUserDetails.name.split(' ')[0];
           setName(firstName);
           setEmail(data.email);
           setShowPassword(true);
@@ -315,13 +321,14 @@ export function LoginForm({
                 onClick={handleGoogleSignIn}
                 variant="outline"
                 className="w-full relative"
+                type="button"
               >
                 <Image
                   src="/google.svg"
                   alt="Google"
                   width={20}
                   height={20}
-                  className="left-3 absolute "
+                  className="left-3 absolute"
                 />
                 Zaloguj się z Google
               </Button>
