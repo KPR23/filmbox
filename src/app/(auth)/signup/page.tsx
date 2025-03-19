@@ -56,7 +56,7 @@ export default function SignUpPage() {
           setPending(false);
           toast.success('Konto zostało utworzone', {
             description:
-              'Aktywuj konto klikając w link weryfikacyjny wysłany na Twój adres e-mail.',
+              'Aktywuj konto klikając w link weryfikacyjny wysłany na Twój adres e-mail',
             duration: 10000,
           });
         },
@@ -118,7 +118,7 @@ export default function SignUpPage() {
             </form>
           </Form>
           <div className="mt-4 text-center text-sm">
-            <Link href="/sign-in" className="text-primary hover:underline">
+            <Link href="/login" className="text-primary hover:underline">
               Masz już konto?
             </Link>
           </div>

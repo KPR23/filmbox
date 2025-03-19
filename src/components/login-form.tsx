@@ -71,11 +71,15 @@ export function LoginForm({
             type: 'manual',
           });
           toast.error('Konto nie zostało jeszcze aktywowane', {
-            description: 'Sprawdź swoją skrzynkę pocztową',
+            description:
+              'Aktywuj konto klikając w link weryfikacyjny wysłany na Twój adres e-mail',
             duration: 10000,
           });
         }
       } else {
+        form.setError('email', {
+          type: 'manual',
+        });
         toast.error('Nie znaleziono konta o podanym adresie e-mail', {
           description: 'Sprawdź, czy adres został wpisany poprawnie',
         });
@@ -280,11 +284,11 @@ export function LoginForm({
               </div>
 
               {!showPassword && (
-                <div className="mt-4 text-center text-sm">
+                <div className="mt-4 text-center text-sm text-muted-foreground">
                   Nie masz konta?{' '}
                   <Link
                     href="/signup"
-                    className="underline underline-offset-4 after:content-['_↗']"
+                    className="underline text-primary underline-offset-4 after:content-['_↗']"
                   >
                     Zarejestruj się
                   </Link>
