@@ -3,8 +3,8 @@
 import { authClient } from '@/auth/auth-client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { Power } from 'lucide-react';
 import LoadingButton from './loading-button';
-import { LogOut } from 'lucide-react';
 
 export default function SignOutButton() {
   const router = useRouter();
@@ -28,9 +28,15 @@ export default function SignOutButton() {
   };
 
   return (
-    <LoadingButton pending={pending} onClick={handleSignOut}>
-      <LogOut />
-      Wyloguj się
+    <LoadingButton
+      pending={pending}
+      onClick={handleSignOut}
+      className="text-black"
+    >
+      <div className="flex items-center justify-center">
+        <Power className="w-4 h-4 mr-2" />
+        Wyloguj się
+      </div>
     </LoadingButton>
   );
 }

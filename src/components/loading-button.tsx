@@ -1,46 +1,38 @@
-import { Button } from '@/components/ui/button';
+import { Loader2 } from 'lucide-react';
+import { Button, buttonVariants } from './ui/button';
+import { cn } from '@/lib/utils';
+import { type VariantProps } from 'class-variance-authority';
+
+type LoadingButtonProps = {
+  pending: boolean;
+  children: React.ReactNode;
+  onClick?: () => void;
+  className?: string;
+  type?: 'button' | 'submit' | 'reset';
+} & VariantProps<typeof buttonVariants>;
+
 export default function LoadingButton({
   pending,
   children,
   onClick,
-}: {
-  pending: boolean;
-  children: React.ReactNode;
-  onClick?: () => void;
-}) {
+  variant = 'default',
+  size = 'default',
+  className,
+  type = 'submit',
+}: LoadingButtonProps) {
   return (
     <Button
       onClick={onClick}
-      className="w-full cursor-pointer"
-      type="submit"
+      className={cn('w-full relative', className)}
+      type={type}
+      variant={variant}
+      size={size}
       disabled={pending}
     >
-      {pending ? (
-        <div className="flex items-center justify-center">
-          <svg
-            className="animate-spin h-5 w-5 text-white mr-2"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            ></circle>
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            ></path>
-          </svg>
-        </div>
-      ) : (
-        children
-      )}
+      <div className="flex items-center justify-center gap-2">
+        {pending && <Loader2 className="w-4 h-4 animate-spin absolute" />}
+        <span className={cn(pending && 'invisible')}>{children}</span>
+      </div>
     </Button>
   );
 }

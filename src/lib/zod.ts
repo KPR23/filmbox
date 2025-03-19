@@ -6,9 +6,9 @@ const getPasswordSchema = (type: 'password' | 'confirmPassword') =>
     .max(32, 'Hasło moze zawierać maksymalnie 32 znaki');
 
 const getEmailSchema = () =>
-  string({ required_error: 'Email is required' })
-    .min(1, 'Email is required')
-    .email('Invalid email');
+  string({ required_error: 'E-mail jest wymagany' })
+    .min(1, 'E-mail jest wymagany')
+    .email('Nieprawidłowy e-mail');
 
 const getNameSchema = () =>
   string({ required_error: 'Jak się nazywasz?' })
@@ -25,9 +25,14 @@ export const signUpSchema = object({
   path: ['confirmPassword'],
 });
 
+const passwordSchema = string({ required_error: `Hasło jest wymagane` }).min(
+  1,
+  'Hasło jest wymagane'
+);
+
 export const signInSchema = object({
   email: getEmailSchema(),
-  password: getPasswordSchema('password'),
+  password: passwordSchema,
 });
 
 export const forgotPasswordSchema = object({

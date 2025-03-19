@@ -1,6 +1,12 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import {
   Form,
   FormControl,
@@ -16,11 +22,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import LoadingButton from '@/components/loading-button';
 import { signUpSchema } from '@/lib/zod';
 import { authClient } from '@/auth/auth-client';
+import LoadingButton from '@/components/loading-button';
+import { useRouter } from 'next/navigation';
 
 export default function SignUpPage() {
+  const router = useRouter();
   const [pending, setPending] = useState(false);
 
   const polishErrorMessages = {
@@ -59,6 +67,7 @@ export default function SignUpPage() {
               'Aktywuj konto klikając w link weryfikacyjny wysłany na Twój adres e-mail',
             duration: 10000,
           });
+          router.push('/login');
         },
         onError: (ctx) => {
           setPending(false);
@@ -75,55 +84,71 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="grow flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-3xl font-bold text-center text-gray-800">
-            Utwórz konto
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              {['name', 'email', 'password', 'confirmPassword'].map((field) => (
-                <FormField
-                  control={form.control}
-                  key={field}
-                  name={field as keyof z.infer<typeof signUpSchema>}
-                  render={({ field: fieldProps }) => (
-                    <FormItem>
-                      <FormLabel>
-                        {field.charAt(0).toUpperCase() + field.slice(1)}
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          type={
-                            field.includes('password')
-                              ? 'password'
-                              : field === 'email'
-                              ? 'email'
-                              : 'text'
-                          }
-                          placeholder={`Enter your ${field}`}
-                          {...fieldProps}
-                          autoComplete="off"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
+      <div className="w-full max-w-sm">
+        <div className="flex flex-col gap-6">
+          <Card>
+            <CardHeader className="text-center justify-center">
+              <CardTitle className="text-2xl">Utwórz konto ✨</CardTitle>
+              <CardDescription>
+                Wprowadź swoje dane, aby utworzyć konto.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-6"
+                >
+                  {['name', 'email', 'password', 'confirmPassword'].map(
+                    (field) => (
+                      <FormField
+                        control={form.control}
+                        key={field}
+                        name={field as keyof z.infer<typeof signUpSchema>}
+                        render={({ field: fieldProps }) => (
+                          <FormItem>
+                            <FormLabel>
+                              {field.charAt(0).toUpperCase() + field.slice(1)}
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                type={
+                                  field.includes('password')
+                                    ? 'password'
+                                    : field === 'email'
+                                    ? 'email'
+                                    : 'text'
+                                }
+                                placeholder={`Enter your ${field}`}
+                                {...fieldProps}
+                                autoComplete="off"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )
                   )}
-                />
-              ))}
-              <LoadingButton pending={pending}>Sign up</LoadingButton>
-            </form>
-          </Form>
-          <div className="mt-4 text-center text-sm">
-            <Link href="/login" className="text-primary hover:underline">
-              Masz już konto?
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
+                  <LoadingButton type="submit" pending={pending}>
+                    Utwórz konto
+                  </LoadingButton>
+                  <div className="text-center text-sm text-muted-foreground">
+                    Masz już konto?{' '}
+                    <Link
+                      href="/login"
+                      className="underline text-primary underline-offset-4 after:content-['_↗']"
+                    >
+                      Zaloguj się
+                    </Link>
+                  </div>
+                </form>
+              </Form>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }

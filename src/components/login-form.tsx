@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -34,6 +33,7 @@ import {
   FormLabel,
   FormMessage,
 } from './ui/form';
+import LoadingButton from './loading-button';
 
 export function LoginForm({
   className,
@@ -51,7 +51,14 @@ export function LoginForm({
       email: '',
       password: '',
     },
+    mode: 'onBlur',
   });
+
+  const resetFieldError = (fieldName: 'email' | 'password') => {
+    if (form.formState.errors[fieldName]) {
+      form.clearErrors(fieldName);
+    }
+  };
 
   async function onEmailSubmit(data: { email: string }) {
     setIsLoading(true);
@@ -221,6 +228,10 @@ export function LoginForm({
                             disabled={showPassword}
                             autoComplete="username email"
                             {...field}
+                            onChange={(e) => {
+                              field.onChange(e);
+                              resetFieldError('email');
+                            }}
                             className={cn(
                               form.formState.errors.email
                                 ? 'border-destructive'
@@ -259,6 +270,10 @@ export function LoginForm({
                               autoFocus
                               autoComplete="current-password"
                               {...field}
+                              onChange={(e) => {
+                                field.onChange(e);
+                                resetFieldError('password');
+                              }}
                               className={cn(
                                 'border',
                                 form.formState.errors.password
@@ -275,16 +290,12 @@ export function LoginForm({
                   </div>
                 )}
 
-                <Button
+                <LoadingButton
                   type="submit"
                   className="w-full relative cursor-pointer"
-                  disabled={isLoading}
+                  pending={isLoading}
                 >
                   <div className="flex items-center justify-center gap-2">
-                    {isLoading && (
-                      <Loader2 className="absolute justify-center h-4 w-4 animate-spin" />
-                    )}
-
                     <span
                       className={cn(
                         'transition-all duration-200',
@@ -307,7 +318,7 @@ export function LoginForm({
                       {isLoading ? '' : 'Dalej'}
                     </span>
                   </div>
-                </Button>
+                </LoadingButton>
               </div>
               {!showPassword && (
                 <>
