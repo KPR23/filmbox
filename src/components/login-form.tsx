@@ -15,7 +15,7 @@ import { cn } from '@/lib/utils';
 import { signInSchema } from '@/lib/zod';
 import { checkEmail } from '@/actions/email-check';
 import { authClient } from '@/auth/auth-client';
-import { UserDetails, userDetailsSchema } from '@/lib/userSchema';
+import { userDetailsSchema } from '@/lib/userSchema';
 
 import {
   Card,
@@ -314,31 +314,33 @@ export function LoginForm({
                   lub
                 </span>
               </div>
-              <Button
-                onClick={handleGoogleSignIn}
-                variant="outline"
-                className="w-full relative"
-                type="button"
-              >
-                <Image
-                  src="/google.svg"
-                  alt="Google"
-                  width={20}
-                  height={20}
-                  className="left-3 absolute"
-                />
-                Zaloguj się z Google
-              </Button>
               {!showPassword && (
-                <div className="text-center text-sm text-muted-foreground">
-                  Nie masz konta?{' '}
-                  <Link
-                    href="/signup"
-                    className="underline text-primary underline-offset-4 after:content-['_↗']"
+                <>
+                  <Button
+                    onClick={handleGoogleSignIn}
+                    variant="outline"
+                    className="w-full relative"
+                    type="button"
                   >
-                    Zarejestruj się
-                  </Link>
-                </div>
+                    <Image
+                      src="/google.svg"
+                      alt="Google"
+                      width={20}
+                      height={20}
+                      className="left-3 absolute"
+                    />
+                    Zaloguj się z Google
+                  </Button>
+                  <div className="text-center text-sm text-muted-foreground">
+                    Nie masz konta?{' '}
+                    <Link
+                      href="/signup"
+                      className="underline text-primary underline-offset-4 after:content-['_↗']"
+                    >
+                      Zarejestruj się
+                    </Link>
+                  </div>
+                </>
               )}
             </form>
           </Form>
