@@ -117,10 +117,6 @@ export function LoginForm({
           callbackURL: '/movies',
         },
         {
-          onSuccess: () => {
-            router.push('/movies');
-            router.refresh();
-          },
           onError: (ctx: ErrorContext) => {
             toast.error('Problemy z logowaniem?', {
               description: 'Kliknij, aby zresetować hasło',
@@ -168,11 +164,10 @@ export function LoginForm({
     await authClient.signIn.social(
       {
         provider: 'google',
+        callbackURL: '/movies',
       },
       {
         onSuccess: () => {
-          router.push('/movies');
-          router.refresh();
           toast.success('Zalogowano pomyślnie', {
             description: 'Przekierowanie do strony głównej',
           });
