@@ -25,15 +25,14 @@ export const signUpSchema = object({
   path: ['confirmPassword'],
 });
 
-const passwordSchema = (type: 'password') =>
-  string({ required_error: `Hasło jest wymagane` }).min(
-    1,
-    'Hasło jest wymagane'
-  );
+const passwordSchema = string({ required_error: `Hasło jest wymagane` }).min(
+  1,
+  'Hasło jest wymagane'
+);
 
 export const signInSchema = object({
   email: getEmailSchema(),
-  password: passwordSchema('password'),
+  password: passwordSchema,
 });
 
 export const forgotPasswordSchema = object({
