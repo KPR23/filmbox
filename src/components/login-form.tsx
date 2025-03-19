@@ -34,6 +34,7 @@ import {
   FormLabel,
   FormMessage,
 } from './ui/form';
+import LoadingButton from './loading-button';
 
 export function LoginForm({
   className,
@@ -290,16 +291,12 @@ export function LoginForm({
                   </div>
                 )}
 
-                <Button
+                <LoadingButton
                   type="submit"
                   className="w-full relative cursor-pointer"
-                  disabled={isLoading}
+                  pending={isLoading}
                 >
                   <div className="flex items-center justify-center gap-2">
-                    {isLoading && (
-                      <Loader2 className="absolute justify-center h-4 w-4 animate-spin" />
-                    )}
-
                     <span
                       className={cn(
                         'transition-all duration-200',
@@ -322,7 +319,7 @@ export function LoginForm({
                       {isLoading ? '' : 'Dalej'}
                     </span>
                   </div>
-                </Button>
+                </LoadingButton>
               </div>
               {!showPassword && (
                 <>

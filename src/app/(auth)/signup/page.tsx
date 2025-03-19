@@ -16,9 +16,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import LoadingButton from '@/components/loading-button';
 import { signUpSchema } from '@/lib/zod';
 import { authClient } from '@/auth/auth-client';
+import LoadingButton from '@/components/loading-button';
 
 export default function SignUpPage() {
   const [pending, setPending] = useState(false);
@@ -114,7 +114,9 @@ export default function SignUpPage() {
                   )}
                 />
               ))}
-              <LoadingButton pending={pending}>Sign up</LoadingButton>
+              <LoadingButton type="submit" pending={pending}>
+                Utwórz konto
+              </LoadingButton>
             </form>
           </Form>
           <div className="mt-4 text-center text-sm">
