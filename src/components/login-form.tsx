@@ -309,13 +309,13 @@ export function LoginForm({
                   </div>
                 </Button>
               </div>
-              <div className="relative text-center w-full text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-                <span className="relative w-full z-10 bg-card px-2 text-muted-foreground">
-                  lub
-                </span>
-              </div>
               {!showPassword && (
                 <>
+                  <div className="relative text-center w-full text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
+                    <span className="relative w-full z-10 bg-card px-2 text-muted-foreground">
+                      lub
+                    </span>
+                  </div>
                   <Button
                     onClick={handleGoogleSignIn}
                     variant="outline"
