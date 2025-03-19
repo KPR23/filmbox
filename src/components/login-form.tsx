@@ -43,7 +43,6 @@ export function LoginForm({
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState('');
-  const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const router = useRouter();
 
   const form = useForm<z.infer<typeof signInSchema>>({
@@ -64,9 +63,7 @@ export function LoginForm({
         const response = await fetch(`/api/user/email?email=${data.email}`);
         const userData = await response.json();
 
-        // Validate user data against our schema
         const parsedUserDetails = userDetailsSchema.parse(userData);
-        setUserDetails(parsedUserDetails);
 
         if (parsedUserDetails.emailVerified) {
           const firstName = parsedUserDetails.name.split(' ')[0];
