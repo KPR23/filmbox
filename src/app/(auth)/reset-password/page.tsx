@@ -3,7 +3,7 @@
 import { resetPasswordSchema } from '@/lib/zod';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { Suspense, useState, useEffect } from 'react';
+import { Suspense, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { authClient } from '@/auth/auth-client';
