@@ -32,6 +32,7 @@ import {
 } from './ui/form';
 import { useRouter } from 'next/navigation';
 import { ErrorContext } from '@better-fetch/fetch';
+import Image from 'next/image';
 
 export function LoginForm({
   className,
@@ -152,6 +153,24 @@ export function LoginForm({
       if (email) onEmailSubmit({ email });
     }
   }
+
+  const handleGoogleSignIn = async () => {
+    await authClient.signIn.social(
+      {
+        provider: 'google',
+      },
+      {
+        onSuccess: () => {
+          router.push('/movies');
+        },
+        onError: (ctx: ErrorContext) => {
+          toast.error('Wystąpił błąd podczas logowania', {
+            description: 'Spróbuj ponownie później',
+          });
+        },
+      }
+    );
+  };
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
@@ -282,9 +301,27 @@ export function LoginForm({
                   </div>
                 </Button>
               </div>
-
+              <div className="relative text-center w-full text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
+                <span className="relative w-full z-10 bg-card px-2 text-muted-foreground">
+                  lub
+                </span>
+              </div>
+              <Button
+                onClick={handleGoogleSignIn}
+                variant="outline"
+                className="w-full relative"
+              >
+                <Image
+                  src="/google.svg"
+                  alt="Google"
+                  width={20}
+                  height={20}
+                  className="left-3 absolute "
+                />
+                Zaloguj się z Google
+              </Button>
               {!showPassword && (
-                <div className="mt-4 text-center text-sm text-muted-foreground">
+                <div className="text-center text-sm text-muted-foreground">
                   Nie masz konta?{' '}
                   <Link
                     href="/signup"
