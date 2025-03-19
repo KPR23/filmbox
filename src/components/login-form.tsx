@@ -51,7 +51,14 @@ export function LoginForm({
       email: '',
       password: '',
     },
+    mode: 'onBlur',
   });
+
+  const resetFieldError = (fieldName: 'email' | 'password') => {
+    if (form.formState.errors[fieldName]) {
+      form.clearErrors(fieldName);
+    }
+  };
 
   async function onEmailSubmit(data: { email: string }) {
     setIsLoading(true);
@@ -221,6 +228,10 @@ export function LoginForm({
                             disabled={showPassword}
                             autoComplete="username email"
                             {...field}
+                            onChange={(e) => {
+                              field.onChange(e);
+                              resetFieldError('email');
+                            }}
                             className={cn(
                               form.formState.errors.email
                                 ? 'border-destructive'
@@ -259,6 +270,10 @@ export function LoginForm({
                               autoFocus
                               autoComplete="current-password"
                               {...field}
+                              onChange={(e) => {
+                                field.onChange(e);
+                                resetFieldError('password');
+                              }}
                               className={cn(
                                 'border',
                                 form.formState.errors.password
