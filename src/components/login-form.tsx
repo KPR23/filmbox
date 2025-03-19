@@ -162,6 +162,10 @@ export function LoginForm({
       {
         onSuccess: () => {
           router.push('/movies');
+          router.refresh();
+          toast.success('Zalogowano pomyślnie', {
+            description: 'Przekierowanie do strony głównej',
+          });
         },
         onError: (ctx: ErrorContext) => {
           toast.error('Wystąpił błąd podczas logowania', {
