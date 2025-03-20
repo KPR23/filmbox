@@ -101,7 +101,7 @@ function ResetPasswordContent() {
                       onClick={() => router.push('/forgot-password')}
                       className="w-full"
                     >
-                      Wyślij nowy link resetujący
+                      Wyślij nowy link
                     </Button>
                   </div>
                 </div>
