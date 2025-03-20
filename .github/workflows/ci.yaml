@@ -14,12 +14,20 @@ jobs:
 
       - name: Set up environment variables
         env:
+          API_ACCESS_TOKEN: ${{ secrets.API_ACCESS_TOKEN }}
+          API_KEY: ${{ secrets.API_KEY }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          DATABASE_POSTGRES_URL: ${{ secrets.DATABASE_POSTGRES_URL }}
-          DATABASE_POSTGRES_USER: ${{ secrets.DATABASE_POSTGRES_USER }}
-          DATABASE_POSTGRES_HOST: ${{ secrets.DATABASE_POSTGRES_HOST }}
-          DATABASE_POSTGRES_PASSWORD: ${{ secrets.DATABASE_POSTGRES_PASSWORD }}
-          DATABASE_POSTGRES_DATABASE: ${{ secrets.DATABASE_POSTGRES_DATABASE }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DATABASE: ${{ secrets.POSTGRES_DATABASE }}
+          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
+          BETTER_AUTH_URL: ${{ secrets.BETTER_AUTH_URL }}
+          EMAIL_VERIFICATION_CALLBACK_URL: ${{ secrets.EMAIL_VERIFICATION_CALLBACK_URL }}
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+          SENDGRID_FROM_EMAIL: ${{ secrets.SENDGRID_FROM_EMAIL }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
         run: |
           echo "DATABASE_URL=$DATABASE_URL" >> .env
           echo "DATABASE_POSTGRES_URL=$DATABASE_POSTGRES_URL" >> .env
@@ -27,10 +35,15 @@ jobs:
           echo "DATABASE_POSTGRES_HOST=$DATABASE_POSTGRES_HOST" >> .env
           echo "DATABASE_POSTGRES_PASSWORD=$DATABASE_POSTGRES_PASSWORD" >> .env
           echo "DATABASE_POSTGRES_DATABASE=$DATABASE_POSTGRES_DATABASE" >> .env
+          echo "GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" >> .env
+          echo "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET" >> .env
 
       - name: Copy .env.example files
         shell: bash
         run: find . -type f -name ".env.example" -exec sh -c 'cp "$1" "${1%.*}"' _ {} \;
+
+      - name: Generate Prisma client
+        run: pnpm prisma generate
 
       - name: Typecheck
         run: pnpm typecheck
