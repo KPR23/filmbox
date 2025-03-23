@@ -116,7 +116,13 @@ export function LoginForm({
           password: data.password,
           callbackURL: '/movies',
         },
+
         {
+          onSuccess: () => {
+            toast.success('Zalogowano pomyślnie', {
+              description: 'Przekierowanie do strony głównej',
+            });
+          },
           onError: (ctx: ErrorContext) => {
             toast.error('Problemy z logowaniem?', {
               description: 'Kliknij, aby zresetować hasło',
