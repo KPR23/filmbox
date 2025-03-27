@@ -1,150 +1,62 @@
 'use server';
 
-import { checkEmail } from '@/actions/email-check';
-import { userDetailsSchema } from '@/lib/userSchema';
-import { UseFormReturn } from 'react-hook-form';
-import { toast } from 'sonner';
-import { authClient } from './auth-client';
-import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
-import { ErrorContext } from '@better-fetch/fetch';
+import prisma from '@/lib/prisma';
 import { z } from 'zod';
-import { signInSchema } from '@/lib/zod';
 
-interface HandleEmailSubmitProps {
-  email: string;
-  setEmail: (email: string) => void;
-  setName: (name: string) => void;
-  setShowPassword: (show: boolean) => void;
-  form: UseFormReturn<z.infer<typeof signInSchema>>;
-  setIsLoading: (loading: boolean) => void;
-}
-
-export async function handleEmailSubmit({
-  email,
-  setEmail,
-  setName,
-  setShowPassword,
-  form,
-  setIsLoading,
-}: HandleEmailSubmitProps): Promise<void> {
-  setIsLoading(true);
+export async function checkEmailExistence(email: string): Promise<{
+  exists: boolean;
+  name?: string;
+  emailVerified?: boolean;
+  error?: string;
+}> {
+  if (!email) {
+    return {
+      exists: false,
+      error: 'E-mail jest wymagany',
+    };
+  }
 
   try {
-    const emailExists = await checkEmail(email);
+    const emailSchema = z.string().email();
+    let validatedEmail: string;
 
-    if (emailExists) {
-      const response = await fetch(`/api/user/email?email=${email}`);
-      const userData = await response.json();
+    try {
+      validatedEmail = emailSchema.parse(email.toLowerCase().trim());
+    } catch (error) {
+      console.error('Invalid email format:', error);
+      return {
+        exists: false,
+        error: 'Nieprawidłowy format adresu email',
+      };
+    }
 
-      const parsedUserDetails = userDetailsSchema.parse(userData);
+    const user = await prisma.user.findUnique({
+      where: { email: validatedEmail },
+      select: {
+        name: true,
+        emailVerified: true,
+      },
+    });
 
-      if (parsedUserDetails.emailVerified) {
-        const firstName = parsedUserDetails.name.split(' ')[0];
-        setName(firstName);
-        setEmail(email);
-        setShowPassword(true);
-      } else {
-        form.setError('email', {
-          type: 'manual',
-        });
-        toast.error('Konto nie zostało jeszcze aktywowane', {
-          description:
-            'Aktywuj konto klikając w link weryfikacyjny wysłany na Twój adres e-mail',
-          duration: 10000,
-        });
-      }
+    if (user) {
+      return {
+        exists: true,
+        name: user.name,
+        emailVerified: !!user.emailVerified,
+      };
     } else {
-      form.setError('email', {
-        type: 'manual',
-      });
-      toast.error('Nie znaleziono konta o podanym adresie e-mail', {
-        description: 'Sprawdź, czy adres został wpisany poprawnie',
-      });
+      return {
+        exists: false,
+        error: 'Nie znaleziono użytkownika',
+      };
     }
   } catch (error) {
-    console.error('Sign-in error:', error);
-    toast.error('Wystąpił błąd', {
-      description: 'Spróbuj ponownie później',
-    });
+    console.error('Email check error:', error);
+    return {
+      exists: false,
+      error: 'Wystąpił błąd podczas sprawdzania adresu email',
+    };
   } finally {
-    setIsLoading(false);
+    await prisma.$disconnect();
   }
-}
-
-interface HandlePasswordSubmitProps {
-  email: string;
-  password: string;
-  form: UseFormReturn<z.infer<typeof signInSchema>>;
-  setIsLoading: (loading: boolean) => void;
-  router: AppRouterInstance;
-}
-
-export async function handlePasswordSubmit({
-  email,
-  password,
-  setIsLoading,
-  form,
-  router,
-}: HandlePasswordSubmitProps): Promise<void> {
-  if (!password) return;
-
-  setIsLoading(true);
-  try {
-    await authClient.signIn.email(
-      {
-        email,
-        password: password,
-        callbackURL: '/movies',
-      },
-
-      {
-        onSuccess: () => {
-          toast.success('Zalogowano pomyślnie', {
-            description: 'Przekierowanie do strony głównej',
-          });
-        },
-        onError: (ctx: ErrorContext) => {
-          toast.error('Problemy z logowaniem?', {
-            description: 'Kliknij, aby zresetować hasło',
-            duration: 10000,
-            action: {
-              label: 'Zmień hasło ↗',
-              onClick: () => {
-                router.push('/forgot-password');
-              },
-            },
-          });
-          form.setError('password', {
-            type: 'manual',
-            message:
-              ctx.error.message === 'Invalid email or password'
-                ? 'Nieprawidłowe dane logowania'
-                : 'Wystąpił błąd podczas logowania',
-          });
-        },
-      }
-    );
-  } catch (error) {
-    console.error('Sign-in error:', error);
-    form.setError('password', {
-      type: 'manual',
-      message: 'Wystąpił błąd podczas logowania',
-    });
-  } finally {
-    setIsLoading(false);
-  }
-}
-
-export async function handleGoogleSignIn(): Promise<void> {
-  await authClient.signIn.social(
-    {
-      provider: 'google',
-      callbackURL: '/movies',
-    },
-    {
-      onError: (ctx: ErrorContext) => {
-        console.log(ctx);
-      },
-    }
-  );
 }
