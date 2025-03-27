@@ -8,13 +8,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { ErrorContext } from '@better-fetch/fetch';
 
 import { cn } from '@/lib/utils';
 import { signInSchema } from '@/lib/zod';
-import { checkEmail } from '@/actions/email-check';
-import { authClient } from '@/auth/auth-client';
-import { userDetailsSchema } from '@/lib/userSchema';
+import { checkEmailExistence } from '@/auth/actions';
 
 import {
   Card,
@@ -34,6 +31,9 @@ import {
   FormMessage,
 } from './ui/form';
 import LoadingButton from './loading-button';
+import { ErrorContext } from '@better-fetch/fetch';
+import { authClient } from '@/auth/auth-client';
+import { ArrowLeft } from 'lucide-react';
 
 export function LoginForm({
   className,
@@ -62,18 +62,28 @@ export function LoginForm({
 
   async function onEmailSubmit(data: { email: string }) {
     setIsLoading(true);
+    if (!data.email) {
+      form.setError('email', {
+        type: 'manual',
+        message: 'Email jest wymagany',
+      });
+      return;
+    }
 
     try {
-      const emailExists = await checkEmail(data.email);
+      const result = await checkEmailExistence(data.email);
 
-      if (emailExists) {
-        const response = await fetch(`/api/user/email?email=${data.email}`);
-        const userData = await response.json();
+      if (result.error) {
+        form.setError('email', {
+          type: 'manual',
+          message: result.error,
+        });
+        return;
+      }
 
-        const parsedUserDetails = userDetailsSchema.parse(userData);
-
-        if (parsedUserDetails.emailVerified) {
-          const firstName = parsedUserDetails.name.split(' ')[0];
+      if (result.exists) {
+        if (result.emailVerified) {
+          const firstName = result.name?.split(' ')[0] || '';
           setName(firstName);
           setEmail(data.email);
           setShowPassword(true);
@@ -184,6 +194,17 @@ export function LoginForm({
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
+      {showPassword ? (
+        <Button
+          className="w-9 h-9"
+          variant="outline"
+          onClick={() => setShowPassword(false)}
+        >
+          <ArrowLeft className="w-4 h-4" />
+        </Button>
+      ) : (
+        ''
+      )}
       <Card>
         <CardHeader className="text-center justify-center">
           <CardTitle className="text-2xl">
