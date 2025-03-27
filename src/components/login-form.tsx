@@ -34,6 +34,8 @@ import LoadingButton from './loading-button';
 import { ErrorContext } from '@better-fetch/fetch';
 import { authClient } from '@/auth/auth-client';
 import { ArrowLeft } from 'lucide-react';
+import { Label } from './ui/label';
+import { Checkbox } from './ui/checkbox';
 
 export function LoginForm({
   className,
@@ -44,6 +46,7 @@ export function LoginForm({
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState('');
   const router = useRouter();
+  const [rememberMe, setRememberMe] = useState(false);
 
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
@@ -125,6 +128,7 @@ export function LoginForm({
           email,
           password: data.password,
           callbackURL: '/movies',
+          rememberMe: rememberMe,
         },
         {
           onError: (ctx: ErrorContext) => {
@@ -233,7 +237,10 @@ export function LoginForm({
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="email">E-mail</FormLabel>
+                        <div className="flex items-center justify-between">
+                          <FormLabel htmlFor="email">E-mail</FormLabel>
+                          <FormMessage />
+                        </div>
                         <FormControl>
                           <Input
                             id="email"
@@ -256,7 +263,6 @@ export function LoginForm({
                             )}
                           />
                         </FormControl>
-                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -269,14 +275,9 @@ export function LoginForm({
                       name="password"
                       render={({ field }) => (
                         <FormItem>
-                          <div className="flex items-center">
+                          <div className="flex items-center justify-between">
                             <FormLabel htmlFor="password">Hasło</FormLabel>
-                            <a
-                              href="/forgot-password"
-                              className="ml-auto inline-block text-sm underline-offset-4 text-muted-foreground hover:underline"
-                            >
-                              Zapomniałeś hasła?
-                            </a>
+                            <FormMessage />
                           </div>
                           <FormControl>
                             <Input
@@ -299,10 +300,29 @@ export function LoginForm({
                               )}
                             />
                           </FormControl>
-                          <FormMessage />
                         </FormItem>
                       )}
                     />
+                    <div className="flex items-center justify-between w-full">
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="rememberMe"
+                          checked={rememberMe}
+                          onCheckedChange={(checked) =>
+                            setRememberMe(
+                              checked === 'indeterminate' ? false : checked
+                            )
+                          }
+                        />
+                        <Label htmlFor="rememberMe">Zapamiętaj mnie</Label>
+                      </div>
+                      <Link
+                        href="/forgot-password"
+                        className="ml-auto inline-block text-sm underline-offset-4 text-muted-foreground hover:underline"
+                      >
+                        Zapomniałeś hasła?
+                      </Link>
+                    </div>
                   </div>
                 )}
 
