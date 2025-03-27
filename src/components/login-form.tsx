@@ -34,6 +34,8 @@ import LoadingButton from './loading-button';
 import { ErrorContext } from '@better-fetch/fetch';
 import { authClient } from '@/auth/auth-client';
 import { ArrowLeft } from 'lucide-react';
+import { Label } from './ui/label';
+import { Checkbox } from './ui/checkbox';
 
 export function LoginForm({
   className,
@@ -44,6 +46,7 @@ export function LoginForm({
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState('');
   const router = useRouter();
+  const [rememberMe, setRememberMe] = useState(false);
 
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
@@ -125,6 +128,7 @@ export function LoginForm({
           email,
           password: data.password,
           callbackURL: '/movies',
+          rememberMe: rememberMe,
         },
         {
           onError: (ctx: ErrorContext) => {
@@ -303,6 +307,18 @@ export function LoginForm({
                         </FormItem>
                       )}
                     />
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="rememberMe"
+                        checked={rememberMe}
+                        onCheckedChange={(checked) =>
+                          setRememberMe(
+                            checked === 'indeterminate' ? false : checked
+                          )
+                        }
+                      />
+                      <Label htmlFor="rememberMe">Zapamiętaj mnie</Label>
+                    </div>
                   </div>
                 )}
 
