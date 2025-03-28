@@ -33,7 +33,7 @@ import {
 import LoadingButton from './loading-button';
 import { ErrorContext } from '@better-fetch/fetch';
 import { authClient } from '@/auth/auth-client';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { Label } from './ui/label';
 import { Checkbox } from './ui/checkbox';
 
@@ -41,12 +41,14 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<'div'>) {
-  const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState('');
-  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [revealedPassword, setRevealedPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
@@ -280,25 +282,40 @@ export function LoginForm({
                             <FormMessage />
                           </div>
                           <FormControl>
-                            <Input
-                              id="password"
-                              type="password"
-                              required
-                              autoFocus
-                              autoComplete="current-password"
-                              {...field}
-                              onChange={(e) => {
-                                field.onChange(e);
-                                resetFieldError('password');
-                              }}
-                              className={cn(
-                                'border',
-                                form.formState.errors.password
-                                  ? 'border-destructive'
-                                  : 'border-input',
-                                'rounded-md p-2 text-sm focus:ring'
-                              )}
-                            />
+                            <div className="relative">
+                              <Input
+                                id="password"
+                                type={revealedPassword ? 'text' : 'password'}
+                                required
+                                autoFocus
+                                autoComplete="current-password"
+                                {...field}
+                                onChange={(e) => {
+                                  field.onChange(e);
+                                  resetFieldError('password');
+                                }}
+                                className={cn(
+                                  'border',
+                                  form.formState.errors.password
+                                    ? 'border-destructive'
+                                    : 'border-input',
+                                  'rounded-md p-2 text-sm focus:ring pr-10'
+                                )}
+                              />
+                              <div className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer">
+                                {revealedPassword ? (
+                                  <Eye
+                                    className="h-4 w-4 text-muted-foreground"
+                                    onClick={() => setRevealedPassword(false)}
+                                  />
+                                ) : (
+                                  <EyeOff
+                                    className="h-4 w-4 text-muted-foreground"
+                                    onClick={() => setRevealedPassword(true)}
+                                  />
+                                )}
+                              </div>
+                            </div>
                           </FormControl>
                         </FormItem>
                       )}
