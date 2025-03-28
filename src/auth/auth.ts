@@ -44,6 +44,33 @@ export const auth = betterAuth({
       });
     },
   },
+  session: {
+    expiresIn: 30 * 24 * 60 * 60,
+    updateAge: 24 * 60 * 60,
+  },
+  advanced: {
+    cookies: {
+      dont_remember: {
+        name: 'better-auth.dont_remember',
+        attributes: {
+          maxAge: undefined,
+          httpOnly: true,
+          sameSite: 'lax',
+          secure: process.env.NODE_ENV === 'production',
+          path: '/',
+        },
+      },
+      session_token: {
+        name: 'better-auth.session_token',
+        attributes: {
+          httpOnly: true,
+          sameSite: 'lax',
+          secure: process.env.NODE_ENV === 'production',
+          path: '/',
+        },
+      },
+    },
+  },
 } satisfies BetterAuthOptions);
 
 export type Session = typeof auth.$Infer.Session;

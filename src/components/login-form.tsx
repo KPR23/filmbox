@@ -8,13 +8,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { ErrorContext } from '@better-fetch/fetch';
 
 import { cn } from '@/lib/utils';
 import { signInSchema } from '@/lib/zod';
-import { checkEmail } from '@/actions/email-check';
-import { authClient } from '@/auth/auth-client';
-import { userDetailsSchema } from '@/lib/userSchema';
+import { checkEmailExistence } from '@/auth/actions';
 
 import {
   Card,
@@ -34,15 +31,23 @@ import {
   FormMessage,
 } from './ui/form';
 import LoadingButton from './loading-button';
+import { ErrorContext } from '@better-fetch/fetch';
+import { authClient } from '@/auth/auth-client';
+import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
+import { Label } from './ui/label';
+import { Checkbox } from './ui/checkbox';
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<'div'>) {
-  const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [revealedPassword, setRevealedPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
   const router = useRouter();
 
   const form = useForm<z.infer<typeof signInSchema>>({
@@ -62,18 +67,28 @@ export function LoginForm({
 
   async function onEmailSubmit(data: { email: string }) {
     setIsLoading(true);
+    if (!data.email) {
+      form.setError('email', {
+        type: 'manual',
+        message: 'Email jest wymagany',
+      });
+      return;
+    }
 
     try {
-      const emailExists = await checkEmail(data.email);
+      const result = await checkEmailExistence(data.email);
 
-      if (emailExists) {
-        const response = await fetch(`/api/user/email?email=${data.email}`);
-        const userData = await response.json();
+      if (result.error) {
+        form.setError('email', {
+          type: 'manual',
+          message: result.error,
+        });
+        return;
+      }
 
-        const parsedUserDetails = userDetailsSchema.parse(userData);
-
-        if (parsedUserDetails.emailVerified) {
-          const firstName = parsedUserDetails.name.split(' ')[0];
+      if (result.exists) {
+        if (result.emailVerified) {
+          const firstName = result.name?.split(' ')[0] || '';
           setName(firstName);
           setEmail(data.email);
           setShowPassword(true);
@@ -115,6 +130,7 @@ export function LoginForm({
           email,
           password: data.password,
           callbackURL: '/movies',
+          rememberMe: rememberMe,
         },
         {
           onError: (ctx: ErrorContext) => {
@@ -184,6 +200,17 @@ export function LoginForm({
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
+      {showPassword ? (
+        <Button
+          className="w-9 h-9"
+          variant="outline"
+          onClick={() => setShowPassword(false)}
+        >
+          <ArrowLeft className="w-4 h-4" />
+        </Button>
+      ) : (
+        ''
+      )}
       <Card>
         <CardHeader className="text-center justify-center">
           <CardTitle className="text-2xl">
@@ -212,7 +239,10 @@ export function LoginForm({
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="email">E-mail</FormLabel>
+                        <div className="flex items-center justify-between">
+                          <FormLabel htmlFor="email">E-mail</FormLabel>
+                          <FormMessage />
+                        </div>
                         <FormControl>
                           <Input
                             id="email"
@@ -235,7 +265,6 @@ export function LoginForm({
                             )}
                           />
                         </FormControl>
-                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -248,40 +277,69 @@ export function LoginForm({
                       name="password"
                       render={({ field }) => (
                         <FormItem>
-                          <div className="flex items-center">
+                          <div className="flex items-center justify-between">
                             <FormLabel htmlFor="password">Hasło</FormLabel>
-                            <a
-                              href="/forgot-password"
-                              className="ml-auto inline-block text-sm underline-offset-4 text-muted-foreground hover:underline"
-                            >
-                              Zapomniałeś hasła?
-                            </a>
+                            <FormMessage />
                           </div>
                           <FormControl>
-                            <Input
-                              id="password"
-                              type="password"
-                              required
-                              autoFocus
-                              autoComplete="current-password"
-                              {...field}
-                              onChange={(e) => {
-                                field.onChange(e);
-                                resetFieldError('password');
-                              }}
-                              className={cn(
-                                'border',
-                                form.formState.errors.password
-                                  ? 'border-destructive'
-                                  : 'border-input',
-                                'rounded-md p-2 text-sm focus:ring'
-                              )}
-                            />
+                            <div className="relative">
+                              <Input
+                                id="password"
+                                type={revealedPassword ? 'text' : 'password'}
+                                required
+                                autoFocus
+                                autoComplete="current-password"
+                                {...field}
+                                onChange={(e) => {
+                                  field.onChange(e);
+                                  resetFieldError('password');
+                                }}
+                                className={cn(
+                                  'border',
+                                  form.formState.errors.password
+                                    ? 'border-destructive'
+                                    : 'border-input',
+                                  'rounded-md p-2 text-sm focus:ring pr-10'
+                                )}
+                              />
+                              <div className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer">
+                                {revealedPassword ? (
+                                  <Eye
+                                    className="h-4 w-4 text-muted-foreground"
+                                    onClick={() => setRevealedPassword(false)}
+                                  />
+                                ) : (
+                                  <EyeOff
+                                    className="h-4 w-4 text-muted-foreground"
+                                    onClick={() => setRevealedPassword(true)}
+                                  />
+                                )}
+                              </div>
+                            </div>
                           </FormControl>
-                          <FormMessage />
                         </FormItem>
                       )}
                     />
+                    <div className="flex items-center justify-between w-full">
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="rememberMe"
+                          checked={rememberMe}
+                          onCheckedChange={(checked) =>
+                            setRememberMe(
+                              checked === 'indeterminate' ? false : checked
+                            )
+                          }
+                        />
+                        <Label htmlFor="rememberMe">Zapamiętaj mnie</Label>
+                      </div>
+                      <Link
+                        href="/forgot-password"
+                        className="ml-auto inline-block text-sm underline-offset-4 text-muted-foreground hover:underline"
+                      >
+                        Zapomniałeś hasła?
+                      </Link>
+                    </div>
                   </div>
                 )}
 
