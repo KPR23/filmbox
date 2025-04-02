@@ -82,7 +82,12 @@ export default function ForgotPasswordPage() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="email">E-mail</FormLabel>
+                        <div className="flex items-center justify-between h-6">
+                          <FormLabel htmlFor="email">E-mail</FormLabel>
+                          <div className="min-h-[1.5rem] flex items-center">
+                            <FormMessage />
+                          </div>
+                        </div>
                         <FormControl>
                           <Input
                             id="email"
@@ -91,7 +96,6 @@ export default function ForgotPasswordPage() {
                             {...field}
                           />
                         </FormControl>
-                        <FormMessage />
                       </FormItem>
                     )}
                   />

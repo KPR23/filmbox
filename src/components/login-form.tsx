@@ -239,9 +239,11 @@ export function LoginForm({
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between h-6">
                           <FormLabel htmlFor="email">E-mail</FormLabel>
-                          <FormMessage />
+                          <div className="min-h-[1.5rem] flex items-center">
+                            <FormMessage />
+                          </div>
                         </div>
                         <FormControl>
                           <Input
@@ -277,9 +279,11 @@ export function LoginForm({
                       name="password"
                       render={({ field }) => (
                         <FormItem>
-                          <div className="flex items-center justify-between">
+                          <div className="flex items-center justify-between h-6">
                             <FormLabel htmlFor="password">Hasło</FormLabel>
-                            <FormMessage />
+                            <div className="min-h-[1.5rem] flex items-center">
+                              <FormMessage />
+                            </div>
                           </div>
                           <FormControl>
                             <div className="relative">
