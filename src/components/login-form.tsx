@@ -3,15 +3,24 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { Eye, EyeOff, PencilLine } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { signInSchema } from '@/lib/zod';
 import { checkEmailExistence } from '@/auth/actions';
+import { authClient } from '@/auth/auth-client';
+import { ErrorContext } from '@better-fetch/fetch';
+import {
+  LoginFormProps,
+  SignInSchema,
+  EmailCheckResponse,
+  FormFieldName,
+  SocialProvider,
+} from '@/lib/types';
 
 import {
   Card,
@@ -31,26 +40,20 @@ import {
   FormMessage,
 } from './ui/form';
 import LoadingButton from './loading-button';
-import { ErrorContext } from '@better-fetch/fetch';
-import { authClient } from '@/auth/auth-client';
-import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { Label } from './ui/label';
 import { Checkbox } from './ui/checkbox';
 
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentProps<'div'>) {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [revealedPassword, setRevealedPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+export function LoginForm({ className, ...props }: LoginFormProps) {
+  const [name, setName] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [revealedPassword, setRevealedPassword] = useState<boolean>(false);
+  const [rememberMe, setRememberMe] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const router = useRouter();
 
-  const form = useForm<z.infer<typeof signInSchema>>({
+  const form = useForm<SignInSchema>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
       email: '',
@@ -59,7 +62,7 @@ export function LoginForm({
     mode: 'onBlur',
   });
 
-  const resetFieldError = (fieldName: 'email' | 'password') => {
+  const resetFieldError = (fieldName: FormFieldName) => {
     if (form.formState.errors[fieldName]) {
       form.clearErrors(fieldName);
     }
@@ -76,7 +79,7 @@ export function LoginForm({
     }
 
     try {
-      const result = await checkEmailExistence(data.email);
+      const result: EmailCheckResponse = await checkEmailExistence(data.email);
 
       if (result.error) {
         form.setError('email', {
@@ -179,7 +182,7 @@ export function LoginForm({
   const handleGoogleSignIn = async () => {
     await authClient.signIn.social(
       {
-        provider: 'google',
+        provider: 'google' as SocialProvider,
         callbackURL: '/movies',
       },
       {
@@ -200,7 +203,7 @@ export function LoginForm({
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
-      {showPassword ? (
+      {/* {showPassword ? (
         <Button
           className="w-9 h-9"
           variant="outline"
@@ -210,7 +213,7 @@ export function LoginForm({
         </Button>
       ) : (
         ''
-      )}
+      )} */}
       <Card>
         <CardHeader className="text-center justify-center">
           <CardTitle className="text-2xl">
@@ -246,26 +249,34 @@ export function LoginForm({
                           </div>
                         </div>
                         <FormControl>
-                          <Input
-                            id="email"
-                            type="email"
-                            placeholder="m@example.com"
-                            required
-                            autoFocus={!showPassword}
-                            disabled={showPassword}
-                            autoComplete="username email"
-                            {...field}
-                            onChange={(e) => {
-                              field.onChange(e);
-                              resetFieldError('email');
-                            }}
-                            className={cn(
-                              form.formState.errors.email
-                                ? 'border-destructive'
-                                : 'border-input',
-                              'rounded-md p-2 text-sm focus:ring'
+                          <div className="relative">
+                            <Input
+                              id="email"
+                              type="email"
+                              placeholder="m@example.com"
+                              required
+                              autoFocus={!showPassword}
+                              disabled={showPassword}
+                              autoComplete="username email"
+                              {...field}
+                              onChange={(e) => {
+                                field.onChange(e);
+                                resetFieldError('email');
+                              }}
+                              className={cn(
+                                form.formState.errors.email
+                                  ? 'border-destructive'
+                                  : 'border-input',
+                                'rounded-md p-2 text-sm focus:ring'
+                              )}
+                            />
+                            {showPassword && (
+                              <PencilLine
+                                onClick={() => setShowPassword(false)}
+                                className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground"
+                              />
                             )}
-                          />
+                          </div>
                         </FormControl>
                       </FormItem>
                     )}
@@ -350,7 +361,7 @@ export function LoginForm({
                 <LoadingButton
                   type="submit"
                   className="w-full relative cursor-pointer"
-                  pending={isLoading}
+                  isLoading={isLoading}
                 >
                   <div className="flex items-center justify-center gap-2">
                     <span

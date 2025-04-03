@@ -99,7 +99,11 @@ export default function ForgotPasswordPage() {
                       </FormItem>
                     )}
                   />
-                  <LoadingButton type="submit" pending={isLoading}>
+                  <LoadingButton
+                    className="w-full"
+                    type="submit"
+                    isLoading={isLoading}
+                  >
                     Wyślij link
                   </LoadingButton>
                   <div className="text-center text-sm text-muted-foreground">

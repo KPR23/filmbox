@@ -1,11 +1,7 @@
 'use client';
+import { Movie } from '@/lib/types';
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
-
-interface Movie {
-  id: number;
-  title: string;
-  original_title: string;
-}
 
 export default function Movies() {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -51,7 +47,9 @@ export default function Movies() {
     <div>
       <ul>
         {movies.map((movie) => (
-          <li key={movie.id}>{movie.title}</li>
+          <li key={movie.id}>
+            <Link href={`/movies/${movie.id}`}>{movie.title}</Link>
+          </li>
         ))}
       </ul>
     </div>
