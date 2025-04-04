@@ -5,7 +5,17 @@ import { SessionData } from '@/lib/types';
 import { usePathname } from 'next/navigation';
 import SignOutButton from './signout-button';
 import { Input } from './ui/input';
-import { ChevronDown, Search, User, Users } from 'lucide-react';
+import {
+  Bell,
+  ChevronDown,
+  HelpCircle,
+  LifeBuoy,
+  LogOut,
+  Search,
+  Settings,
+  User,
+  Users,
+} from 'lucide-react';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import {
@@ -15,6 +25,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
+import { Switch } from './ui/switch';
+import { Label } from './ui/label';
 
 interface NavbarProps {
   session: SessionData | null;
@@ -97,7 +109,45 @@ export function Navbar({ session }: NavbarProps) {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
-                <span>Wyloguj się</span>
+                <Link href="/profile">
+                  <span className="flex items-center gap-2">
+                    <User className="w-4 h-4" />
+                    Profil
+                    <span className="text-muted-foreground/70 text-sm">
+                      @{session.user.name}
+                    </span>
+                  </span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <span className="flex items-center gap-2">
+                  <Bell className="w-4 h-4" />
+                  Powiadomienia
+                </span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <Link href="/settings">
+                  <span className="flex items-center gap-2">
+                    <Settings className="w-4 h-4" />
+                    Ustawienia
+                  </span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link href="/help">
+                  <span className="flex items-center gap-2">
+                    <LifeBuoy className="w-4 h-4" />
+                    Centrum pomocy
+                  </span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <button className="flex items-center gap-2">
+                  <LogOut className="w-4 h-4" />
+                  Wyloguj się
+                </button>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

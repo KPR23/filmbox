@@ -198,17 +198,6 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
-      {/* {showPassword ? (
-        <Button
-          className="w-9 h-9"
-          variant="outline"
-          onClick={() => setShowPassword(false)}
-        >
-          <ArrowLeft className="w-4 h-4" />
-        </Button>
-      ) : (
-        ''
-      )} */}
       <Card>
         <CardHeader className="text-center justify-center">
           <CardTitle className="text-2xl">
