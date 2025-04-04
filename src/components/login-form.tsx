@@ -186,11 +186,6 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
         callbackURL: '/movies',
       },
       {
-        onSuccess: () => {
-          toast.success('Zalogowano pomyślnie', {
-            description: 'Przekierowanie do strony głównej',
-          });
-        },
         onError: (ctx: ErrorContext) => {
           console.log(ctx);
           toast.error('Wystąpił błąd podczas logowania', {
