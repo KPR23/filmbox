@@ -10,6 +10,7 @@ datasource db {
 model User {
   id            String    @id @default(cuid()) @map("_id")
   name          String
+  tag           String?   @unique
   email         String    @unique
   emailVerified Boolean   @default(false)
   image         String?
@@ -22,6 +23,8 @@ model User {
   updatedAt     DateTime  @updatedAt
   accounts      Account[]
   sessions      Session[]
+  friendsOf     Friend[]  @relation("UserFriends")
+  friends       Friend[]  @relation("FriendsOfUser")
 }
 
 model Session {
@@ -61,4 +64,19 @@ model Verification {
   expiresAt  DateTime
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+}
+
+model Friend {
+  id        String   @id @default(cuid()) @map("_id")
+  userId    String
+  friendId  String
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation("UserFriends", fields: [userId], references: [id], onDelete: Cascade)
+  friend    User     @relation("FriendsOfUser", fields: [friendId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, friendId])
+  @@index([userId])
+  @@index([friendId])
 }

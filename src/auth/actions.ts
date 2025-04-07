@@ -2,13 +2,11 @@
 
 import prisma from '@/lib/prisma';
 import { z } from 'zod';
+import { EmailCheckResponse, ApiError } from '@/lib/types';
 
-export async function checkEmailExistence(email: string): Promise<{
-  exists: boolean;
-  name?: string;
-  emailVerified?: boolean;
-  error?: string;
-}> {
+export async function checkEmailExistence(
+  email: string
+): Promise<EmailCheckResponse> {
   if (!email) {
     return {
       exists: false,
@@ -59,4 +57,20 @@ export async function checkEmailExistence(email: string): Promise<{
   } finally {
     await prisma.$disconnect();
   }
+}
+
+export async function handleAuthError(error: unknown): Promise<ApiError> {
+  console.error('Auth error:', error);
+
+  if (error instanceof Error) {
+    return {
+      message: error.message,
+      status: 500,
+    };
+  }
+
+  return {
+    message: 'Wystąpił nieoczekiwany błąd',
+    status: 500,
+  };
 }
