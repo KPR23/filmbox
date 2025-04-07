@@ -13,6 +13,7 @@ import { DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { Session } from '@/auth/auth';
+import { Input } from '@/components/ui/input';
 
 interface ProfilePageProps {
   session: Session | null;
@@ -20,9 +21,19 @@ interface ProfilePageProps {
 
 export default function ProfilePage({ session }: ProfilePageProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const [name, setName] = useState(session?.user.name);
+  const [email, setEmail] = useState(session?.user.email);
 
   const handleEdit = () => {
     setIsEditing(!isEditing);
+  };
+
+  const handleSave = () => {
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
   };
 
   return (
@@ -40,11 +51,11 @@ export default function ProfilePage({ session }: ProfilePageProps) {
             </Button>
           ) : (
             <div className="flex gap-2">
-              <Button variant="outline" onClick={handleEdit}>
+              <Button variant="outline" onClick={handleCancel}>
                 <Ban className="w-6 h-6" />
                 Anuluj
               </Button>
-              <Button onClick={handleEdit}>
+              <Button onClick={handleSave}>
                 <Save className="w-6 h-6" />
                 Zapisz
               </Button>
@@ -60,9 +71,28 @@ export default function ProfilePage({ session }: ProfilePageProps) {
                 src={session?.user.image || ''}
                 name={session?.user.name || ''}
               />
-              <div className="flex flex-col">
-                <h1 className="text-xl font-bold">{session?.user.name}</h1>
-                <p className="text-sm text-gray-500">{session?.user.email}</p>
+              <div className="flex flex-col w-full max-w-2xs">
+                {!isEditing ? (
+                  <>
+                    <h1 className="text-xl font-bold">{session?.user.name}</h1>
+                    <p className="text-sm text-gray-500">
+                      {session?.user.email}
+                    </p>
+                  </>
+                ) : (
+                  <div className="flex flex-col gap-2 w-full">
+                    <Input
+                      type="text"
+                      value={session?.user.name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                    <Input
+                      type="email"
+                      value={session?.user.email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </div>
