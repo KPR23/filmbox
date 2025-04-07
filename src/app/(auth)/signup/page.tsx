@@ -131,7 +131,11 @@ export default function SignUpPage() {
                       />
                     )
                   )}
-                  <LoadingButton type="submit" pending={pending}>
+                  <LoadingButton
+                    className="w-full"
+                    type="submit"
+                    isLoading={pending}
+                  >
                     Utwórz konto
                   </LoadingButton>
                   <div className="text-center text-sm text-muted-foreground">

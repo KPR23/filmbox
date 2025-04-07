@@ -166,7 +166,7 @@ function ResetPasswordContent() {
                     )}
                   />
 
-                  <LoadingButton pending={isPending}>
+                  <LoadingButton isLoading={isPending}>
                     Zresetuj hasło
                   </LoadingButton>
                 </form>

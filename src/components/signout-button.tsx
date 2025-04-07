@@ -29,7 +29,7 @@ export default function SignOutButton() {
 
   return (
     <LoadingButton
-      pending={pending}
+      isLoading={pending}
       onClick={handleSignOut}
       className="text-black"
     >
