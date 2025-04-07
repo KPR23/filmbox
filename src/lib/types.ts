@@ -15,6 +15,7 @@ export type ResetPasswordSchema = z.infer<typeof resetPasswordSchema>;
 export interface User {
   id: string;
   name: string;
+  tag: string;
   email: string;
   emailVerified: boolean;
   image?: string;
@@ -46,10 +47,6 @@ export interface Movie {
   revenue: number;
 }
 
-export interface SessionData extends Session {
-  user: User;
-}
-
 export interface LoginFormProps extends React.ComponentProps<'div'> {
   className?: string;
 }
@@ -79,7 +76,7 @@ export interface AuthResponse {
   success: boolean;
   error?: string;
   user?: User;
-  session?: SessionData;
+  session?: Session;
 }
 
 export type SocialProvider = 'google';

@@ -1,14 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { SessionData } from '@/lib/types';
+import { Session } from '@/auth/auth';
 import { usePathname } from 'next/navigation';
-import SignOutButton from './signout-button';
 import { Input } from './ui/input';
 import {
   Bell,
   ChevronDown,
-  HelpCircle,
   LifeBuoy,
   LogOut,
   Search,
@@ -17,7 +15,6 @@ import {
   Users,
 } from 'lucide-react';
 import { Button } from './ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,14 +22,28 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
-import { Switch } from './ui/switch';
-import { Label } from './ui/label';
-
+import AvatarComponent from './avatar';
+import { authClient } from '@/auth/auth-client';
+import { useRouter } from 'next/navigation';
 interface NavbarProps {
-  session: SessionData | null;
+  session: Session | null;
 }
 
 export function Navbar({ session }: NavbarProps) {
+  const router = useRouter();
+  const handleSignOut = async () => {
+    try {
+      await authClient.signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            router.push('/login');
+          },
+        },
+      });
+    } catch (error) {
+      console.log('Error while signing out', error);
+    }
+  };
   const pathname = usePathname();
 
   return (
@@ -82,32 +93,31 @@ export function Navbar({ session }: NavbarProps) {
             className="w-64 relative pl-9"
           />
         </div>
-        <Button variant="outline" className="size-9 p-0">
-          <Users className="w-4 h-4" />
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="size-9 p-0">
+              <Bell className="w-4 h-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem>Powiadomienia</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         {session && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <div className="justify-center rounded-lg text-sm h-9 inline-flex items-center border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 p-2 cursor-pointer gap-2">
                 <div className="flex items-center">
-                  <Avatar className="w-6 h-6 ">
-                    <AvatarImage src={session.user.image} />
-                    <AvatarFallback>
-                      {session.user.name?.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
+                  <AvatarComponent
+                    src={session.user.image || ''}
+                    name={session.user.name || ''}
+                  />
                   <span className="px-2 ">{session.user.name}</span>
                 </div>
                 <ChevronDown className="w-4 h-4" />
               </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem>
-                <span className="text-muted-foreground/70 text-sm">
-                  {session.user.email}
-                </span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <Link href="/profile">
                   <span className="flex items-center gap-2">
@@ -120,10 +130,12 @@ export function Navbar({ session }: NavbarProps) {
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <span className="flex items-center gap-2">
-                  <Bell className="w-4 h-4" />
-                  Powiadomienia
-                </span>
+                <Link href="/friends">
+                  <span className="flex items-center gap-2">
+                    <Users className="w-4 h-4" />
+                    Znajomi
+                  </span>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
@@ -144,7 +156,10 @@ export function Navbar({ session }: NavbarProps) {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
-                <button className="flex items-center gap-2">
+                <button
+                  onClick={handleSignOut}
+                  className="flex items-center gap-2"
+                >
                   <LogOut className="w-4 h-4" />
                   Wyloguj się
                 </button>
