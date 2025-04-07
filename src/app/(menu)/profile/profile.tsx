@@ -13,7 +13,6 @@ import { DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { Session } from '@/auth/auth';
-import { Input } from '@/components/ui/input';
 
 interface ProfilePageProps {
   session: Session | null;
@@ -21,8 +20,6 @@ interface ProfilePageProps {
 
 export default function ProfilePage({ session }: ProfilePageProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const [name, setName] = useState(session?.user.name);
-  const [email, setEmail] = useState(session?.user.email);
 
   const handleEdit = () => {
     setIsEditing(!isEditing);
@@ -72,7 +69,7 @@ export default function ProfilePage({ session }: ProfilePageProps) {
                 name={session?.user.name || ''}
               />
               <div className="flex flex-col w-full max-w-2xs">
-                {!isEditing ? (
+                {/* {!isEditing ? (
                   <>
                     <h1 className="text-xl font-bold">{session?.user.name}</h1>
                     <p className="text-sm text-gray-500">
@@ -92,7 +89,7 @@ export default function ProfilePage({ session }: ProfilePageProps) {
                       onChange={(e) => setEmail(e.target.value)}
                     />
                   </div>
-                )}
+                )} */}
               </div>
             </div>
           </div>
