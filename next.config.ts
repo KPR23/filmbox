@@ -2,7 +2,14 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ['lh3.googleusercontent.com', 'image.tmdb.org'],
+    remotePatterns: [
+      {
+        hostname: 'lh3.googleusercontent.com',
+      },
+      {
+        hostname: 'image.tmdb.org',
+      },
+    ],
   },
   eslint: {
     ignoreDuringBuilds: true,

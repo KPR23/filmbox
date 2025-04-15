@@ -3,13 +3,11 @@
 import Link from 'next/link';
 import { Session } from '@/auth/auth';
 import { usePathname } from 'next/navigation';
-import { Input } from './ui/input';
 import {
   Bell,
   ChevronDown,
   LifeBuoy,
   LogOut,
-  Search,
   Settings,
   User,
   Users,
@@ -25,6 +23,7 @@ import {
 import AvatarComponent from './avatar';
 import { authClient } from '@/auth/auth-client';
 import { useRouter } from 'next/navigation';
+import { Search } from './search';
 interface NavbarProps {
   session: Session | null;
 }
@@ -87,11 +86,7 @@ export function Navbar({ session }: NavbarProps) {
       </div>
       <div className="flex items-center justify-between gap-4">
         <div className="w-64 relative">
-          <Search className="w-4 h-4 text-muted-foreground/70 absolute left-3 top-1/2 -translate-y-1/2" />
-          <Input
-            placeholder="Szukaj filmów, seriali..."
-            className="w-64 relative pl-9"
-          />
+          <Search placeholder="Szukaj filmów, seriali..." />
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
