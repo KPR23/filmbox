@@ -1,8 +1,9 @@
 import { betterAuth, BetterAuthOptions } from 'better-auth';
 import prisma from '@/lib/prisma';
-import { sendEmail } from '@/actions/email';
+import { sendEmail } from '@/lib/email';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { openAPI } from 'better-auth/plugins';
+import { getUserData } from '@/lib/queries';
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -13,10 +14,15 @@ export const auth = betterAuth({
     enabled: true,
     requireEmailVerification: true,
     sendResetPassword: async ({ user, url }) => {
+      const fetchedUser = await getUserData(user.id);
+
+      if (!fetchedUser?.email) {
+        throw new Error('User email not found');
+      }
       await sendEmail({
-        to: user.email,
-        subject: 'Reset your password',
-        text: `Click the link to reset your password: ${url}`,
+        to: fetchedUser.email,
+        subject: 'Zresetuj swoje hasło',
+        text: `Kliknij link, aby zresetować swoje hasło: ${url}`,
       });
     },
   },
@@ -36,11 +42,16 @@ export const auth = betterAuth({
     sendOnSignUp: true,
     autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, token }) => {
+      const fetchedUser = await getUserData(user.id);
+
+      if (!fetchedUser?.email) {
+        throw new Error('User email not found');
+      }
       const verificationUrl = `${process.env.BETTER_AUTH_URL}/api/auth/verify-email?token=${token}&callbackURL=${process.env.EMAIL_VERIFICATION_CALLBACK_URL}`;
       await sendEmail({
-        to: user.email,
-        subject: 'Verify your email address',
-        text: `Click the link to verify your email: ${verificationUrl}`,
+        to: fetchedUser.email,
+        subject: 'Weryfikacja adresu email',
+        text: `Kliknij link, aby weryfikować swój adres email: ${verificationUrl}`,
       });
     },
   },

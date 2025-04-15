@@ -20,7 +20,7 @@ export async function GET() {
 
   try {
     const response = await fetch(
-      'https://api.themoviedb.org/3/movie/popular',
+      'https://api.themoviedb.org/3/discover/movie',
       options
     );
 
@@ -43,19 +43,3 @@ export async function GET() {
     );
   }
 }
-
-// export async function POST(req: NextRequest) {
-//   try {
-//     const body = await req.json();
-//     const { title, tmdbId, imageUrl, rating } = body;
-
-//     if (!title || !tmdbId) {
-//       return NextResponse.json(
-//         { error: 'Title and tmdbId are required' },
-//         { status: 400 }
-//       );
-//     }
-
-//     // const result =
-//   } catch {}
-// }

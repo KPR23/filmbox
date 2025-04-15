@@ -11,8 +11,11 @@ import AvatarComponent from '@/components/avatar';
 import { Ban, Save, UserRoundPen } from 'lucide-react';
 import { DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Session } from '@/auth/auth';
+import { Input } from '@/components/ui/input';
+import { getUserData } from '@/lib/queries';
+import { User } from '@prisma/client';
 
 interface ProfilePageProps {
   session: Session | null;
@@ -20,6 +23,25 @@ interface ProfilePageProps {
 
 export default function ProfilePage({ session }: ProfilePageProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const [userData, setUserData] = useState<User | null>(null);
+
+  useEffect(() => {
+    async function fetchUser() {
+      if (session?.user?.id) {
+        try {
+          const data = await getUserData(session.user.id);
+          if (data) {
+            setUserData(data as User);
+          } else {
+            console.error('Failed to fetch user data');
+          }
+        } catch (error) {
+          console.error('Error fetching user:', error);
+        }
+      }
+    }
+    fetchUser();
+  }, [session?.user?.id]);
 
   const handleEdit = () => {
     setIsEditing(!isEditing);
@@ -65,31 +87,21 @@ export default function ProfilePage({ session }: ProfilePageProps) {
             <div className="flex gap-4 items-center">
               <AvatarComponent
                 size={50}
-                src={session?.user.image || ''}
-                name={session?.user.name || ''}
+                src={userData?.image || ''}
+                name={userData?.name || ''}
               />
               <div className="flex flex-col w-full max-w-2xs">
-                {/* {!isEditing ? (
+                {!isEditing ? (
                   <>
                     <h1 className="text-xl font-bold">{session?.user.name}</h1>
-                    <p className="text-sm text-gray-500">
-                      {session?.user.email}
-                    </p>
+                    <p className="text-sm text-gray-500">{userData?.email}</p>
                   </>
                 ) : (
                   <div className="flex flex-col gap-2 w-full">
-                    <Input
-                      type="text"
-                      value={session?.user.name}
-                      onChange={(e) => setName(e.target.value)}
-                    />
-                    <Input
-                      type="email"
-                      value={session?.user.email}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
+                    <Input type="text" value={userData?.name || ''} />
+                    <Input type="email" value={userData?.email || ''} />
                   </div>
-                )} */}
+                )}
               </div>
             </div>
           </div>

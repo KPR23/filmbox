@@ -22,25 +22,16 @@ export async function GET(req: NextRequest, { params }: { params: Params }) {
   }
 
   try {
+    console.log(id);
     const response = await fetch(
-      `https://api.themoviedb.org/3/movie/${id}`,
+      `https://api.themoviedb.org/3/genre/movie/${id}?language=pl`,
       options
     );
-
-    if (!response.ok) {
-      console.error('HTTP error:', response.status);
-      return NextResponse.json(
-        { error: 'Failed to fetch data' },
-        { status: response.status }
-      );
-    }
-
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Error fetching data:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch data' },
+      { error: 'Failed to fetch data' + error },
       { status: 500 }
     );
   }

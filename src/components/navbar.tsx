@@ -1,17 +1,16 @@
 'use client';
 
+import type { User } from '@/lib/types';
 import Link from 'next/link';
 import { Session } from '@/auth/auth';
 import { usePathname } from 'next/navigation';
-import { Input } from './ui/input';
 import {
   Bell,
   ChevronDown,
   LifeBuoy,
   LogOut,
-  Search,
   Settings,
-  User,
+  User as UserIcon,
   Users,
 } from 'lucide-react';
 import { Button } from './ui/button';
@@ -25,12 +24,37 @@ import {
 import AvatarComponent from './avatar';
 import { authClient } from '@/auth/auth-client';
 import { useRouter } from 'next/navigation';
+import { Search } from './search';
+import { useEffect, useState } from 'react';
+import { getUserData } from '@/lib/queries';
+
 interface NavbarProps {
   session: Session | null;
 }
 
 export function Navbar({ session }: NavbarProps) {
   const router = useRouter();
+  const [userData, setUserData] = useState<User | null>(null);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    async function fetchUser() {
+      if (session?.user?.id) {
+        try {
+          const data = await getUserData(session.user.id);
+          if (data) {
+            setUserData(data as User);
+          } else {
+            console.error('Failed to fetch user data');
+          }
+        } catch (error) {
+          console.error('Error fetching user:', error);
+        }
+      }
+    }
+    fetchUser();
+  }, [session?.user?.id]);
+
   const handleSignOut = async () => {
     try {
       await authClient.signOut({
@@ -44,7 +68,8 @@ export function Navbar({ session }: NavbarProps) {
       console.log('Error while signing out', error);
     }
   };
-  const pathname = usePathname();
+
+  const userTag = userData?.tag || 'Brak tagu';
 
   return (
     <nav className="flex justify-between items-center py-4 px-8 border-b">
@@ -87,11 +112,7 @@ export function Navbar({ session }: NavbarProps) {
       </div>
       <div className="flex items-center justify-between gap-4">
         <div className="w-64 relative">
-          <Search className="w-4 h-4 text-muted-foreground/70 absolute left-3 top-1/2 -translate-y-1/2" />
-          <Input
-            placeholder="Szukaj filmów, seriali..."
-            className="w-64 relative pl-9"
-          />
+          <Search placeholder="Szukaj filmów..." />
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -121,10 +142,10 @@ export function Navbar({ session }: NavbarProps) {
               <DropdownMenuItem>
                 <Link href="/profile">
                   <span className="flex items-center gap-2">
-                    <User className="w-4 h-4" />
+                    <UserIcon className="w-4 h-4" />
                     Profil
                     <span className="text-muted-foreground/70 text-sm">
-                      @{session.user.name}
+                      @{userTag}
                     </span>
                   </span>
                 </Link>
